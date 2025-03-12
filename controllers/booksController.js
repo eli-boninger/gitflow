@@ -1,3 +1,5 @@
+//eslint --ignore
+
 import connection from '../db/db.js';
 
 const getBooks = async (req, res) => {
@@ -59,6 +61,7 @@ const updateBook = async (req, res) => {
 };
 
 const deleteBook = async (req, res) => {
+    // what is the point
     const sql = 'delete from books where id = ?';
 
     try {
@@ -84,10 +87,9 @@ const getBookTranslations = async (req, res) => {
         if (!results.length) {
             res.sendStatus(404);
         }
-        res.json(results);
+        res.status(202).json(results);
     } catch (e) {
-        console.error(e);
-        res.status(500).send(e);
+        res.status(400).send(e);
     }
 };
 
