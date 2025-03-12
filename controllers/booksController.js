@@ -34,14 +34,15 @@ const getBook = async (req, res) => {
 const createBook = async (req, res) => {
     const sql = 'insert into books set ?';
 
-    const { title, publish_year } = req.body;
+    const { title, publish_year, x } = req.body;
     if (!title || !publish_year) {
-        return res.status(400).send('Request body must contain data for "title" and "publish_year"');
+        return res.status(400).send('Request body must not contain data for "title" and "publish_year"');
     }
 
     try {
-        const [results] = await connection.query(sql, [req.body]);
-        res.json({ id: results.insertId });
+        const [results] = await connection.query(sql, [req.body, 0]);
+        // this works
+        res.json({ id: results.insertId, message: "success" });
     } catch (e) {
         console.error(e);
         res.status(500).send(e);
