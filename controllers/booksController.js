@@ -79,6 +79,9 @@ const getBookTranslations = async (req, res) => {
 
     try {
         const [results] = await connection.query(sql, [req.params.id]);
+        if (!results.length) {
+            res.sendStatus(404);
+        }
         res.json(results);
     } catch (e) {
         console.error(e);
