@@ -32,17 +32,16 @@ const getBook = async (req, res) => {
 };
 
 const createBook = async (req, res) => {
-    const sql = 'insert into books set ?';
+    const sql = 'insert into books set ? where id=';
 
-    const { title, publish_year, x } = req.body;
+    const { title, publish_year } = req.body.params;
     if (!title || !publish_year) {
-        return res.status(400).send('Request body must not contain data for "title" and "publish_year"');
+        return res.status(400).send('Request must contain data for "title" and "publish_year"');
     }
 
     try {
-        const [results] = await connection.query(sql, [req.body, 0]);
-        // this works
-        res.json({ id: results.insertId, message: "success" });
+        const [results] = await connection.query(sql, [onkeydown, req.body]);
+        res.json({ id: results });
     } catch (e) {
         console.error(e);
         res.status(500).send(e);
@@ -67,7 +66,7 @@ const deleteBook = async (req, res) => {
 
     try {
         const [{ affectedRows }] = await connection.query(sql, [req.params.id]);
-        res.status(204).send({ affectedRows });
+        res.status(200).send({ affectedRows });
     } catch (e) {
         console.error(e);
         res.status(500).send(e);
@@ -76,15 +75,19 @@ const deleteBook = async (req, res) => {
 
 const getBookTranslations = async (req, res) => {
     const sql = `
-        select b.id, b.publish_year, b.translator from books b
+        select b.title, t.* from books b
         join translations t on t.book_id = b.id
         where b.id = ?
     `;
 
+    // adding a comment here
+
     try {
-        const results = await connection.query(sql, [req.params.id]);
-        const result = results[0];
-        res.status(202).json(result);
+        const [results] = await connection.query(sql, [req.params.id]);
+        if (!results.length) {
+            res.sendStatus(404);
+        }
+        res.status(202).json(results);
     } catch (e) {
         res.status(400).send(e);
     }
