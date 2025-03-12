@@ -1,3 +1,5 @@
+//eslint --ignore
+
 import connection from '../db/db.js';
 
 const getBooks = async (req, res) => {
@@ -59,6 +61,7 @@ const updateBook = async (req, res) => {
 };
 
 const deleteBook = async (req, res) => {
+    // what is the point
     const sql = 'delete from books where id = ?';
 
     try {
@@ -72,17 +75,17 @@ const deleteBook = async (req, res) => {
 
 const getBookTranslations = async (req, res) => {
     const sql = `
-        select * from books b
+        select b.id, b.publish_year, b.translator from books b
         join translations t on t.book_id = b.id
         where b.id = ?
     `;
 
     try {
-        const [results] = await connection.query(sql, [req.params.id]);
-        res.json(results);
+        const results = await connection.query(sql, [req.params.id]);
+        const result = results[0];
+        res.status(202).json(result);
     } catch (e) {
-        console.error(e);
-        res.status(500).send(e);
+        res.status(400).send(e);
     }
 };
 
