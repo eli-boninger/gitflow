@@ -1,5 +1,5 @@
 const getAuthors = (req, res) => {
-
+    const sql = 'select * from authors';
 };
 
 const getAuthor = (req, res) => {
