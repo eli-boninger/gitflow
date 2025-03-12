@@ -63,7 +63,7 @@ const deleteBook = async (req, res) => {
 
     try {
         const [{ affectedRows }] = await connection.query(sql, [req.params.id]);
-        res.status(204).send({ affectedRows });
+        res.status(200).send({ affectedRows });
     } catch (e) {
         console.error(e);
         res.status(500).send(e);
@@ -72,10 +72,12 @@ const deleteBook = async (req, res) => {
 
 const getBookTranslations = async (req, res) => {
     const sql = `
-        select * from books b
+        select b.title, t.* from books b
         join translations t on t.book_id = b.id
         where b.id = ?
     `;
+
+    // adding a comment here
 
     try {
         const [results] = await connection.query(sql, [req.params.id]);
